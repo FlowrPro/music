@@ -28,6 +28,8 @@
   <button onclick="startPlaylist()">Start Playlist</button>
   <button onclick="startShuffle()">Shuffle Mode</button>
   <button onclick="stopPlaylist()">Stop</button>
+  <button onclick="prevSong()">Previous</button>
+  <button onclick="nextSong()">Next</button>
 
   <h2 id="nowPlaying"></h2>
 
@@ -38,7 +40,7 @@
       "songs/K.mp3",
       "songs/Circles.mp3",
       "songs/Mitski.mp3",
-      "songs/Where Our Blue is (Acoustic Version).mp3" // make sure this file exists
+      "songs/Where Our Blue is (Acoustic Version).mp3" // ensure this file exists
     ];
 
     const player = document.getElementById("player");
@@ -77,18 +79,34 @@
       playCurrentSong();
     }
 
+    function nextSong() {
+      if (shuffleMode) {
+        playRandomSong();
+      } else {
+        currentIndex++;
+        if (currentIndex >= songs.length) {
+          currentIndex = 0; // loop back to start
+        }
+        playCurrentSong();
+      }
+    }
+
+    function prevSong() {
+      if (shuffleMode) {
+        playRandomSong();
+      } else {
+        currentIndex--;
+        if (currentIndex < 0) {
+          currentIndex = songs.length - 1; // loop to last song
+        }
+        playCurrentSong();
+      }
+    }
+
     // When a song ends, move to the next one
     player.addEventListener("ended", () => {
       if (playlistActive) {
-        if (shuffleMode) {
-          playRandomSong();
-        } else {
-          currentIndex++;
-          if (currentIndex >= songs.length) {
-            currentIndex = 0; // loop back to start
-          }
-          playCurrentSong();
-        }
+        nextSong();
       }
     });
   </script>
