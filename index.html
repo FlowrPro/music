@@ -1,1 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Looping Playlist</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 50px;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 16px;
+    }
+  </style>
+</head>
+<body>
+  <h1>My Playlist</h1>
+  <audio id="player" controls></audio>
+  <br>
+  <button onclick="startPlaylist()">Start Playlist</button>
+  <button onclick="stopPlaylist()">Stop</button>
 
+  <script>
+    // Add your song file paths here
+    const songs = [
+      "songs/song1.mp3",
+      "songs/song2.mp3",
+      "songs/song3.mp3"
+    ];
+
+    const player = document.getElementById("player");
+    let currentIndex = 0;
+    let playlistActive = false;
+
+    function startPlaylist() {
+      playlistActive = true;
+      currentIndex = 0;
+      playCurrentSong();
+    }
+
+    function stopPlaylist() {
+      playlistActive = false;
+      player.pause();
+    }
+
+    function playCurrentSong() {
+      player.src = songs[currentIndex];
+      player.play();
+    }
+
+    // When a song ends, move to the next one
+    player.addEventListener("ended", () => {
+      if (playlistActive) {
+        currentIndex++;
+        if (currentIndex >= songs.length) {
+          currentIndex = 0; // loop back to start
+        }
+        playCurrentSong();
+      }
+    });
+  </script>
+</body>
+</html>
