@@ -34,11 +34,11 @@
   <h2 id="nowPlaying"></h2>
 
   <script>
-    // Add your song file paths here
+    // include the .mp3 extension and match exact filenames & paths
     const songs = [
-  "songs/angelofdarkness",
-  "songs/sirensounds",
-];
+      "songs/angelofdarkness.mp3",
+      "songs/sirensounds.mp3"
+    ];
 
     const player = document.getElementById("player");
     let currentIndex = 0;
@@ -66,9 +66,14 @@
 
     function playCurrentSong() {
       player.src = songs[currentIndex];
-      player.play();
-      document.getElementById("nowPlaying").textContent =
-        "Now Playing: " + songs[currentIndex].split("/").pop();
+      // load then play and handle promise rejection (autoplay policy)
+      player.load();
+      player.play().catch(err => {
+        console.warn("Playback failed:", err);
+      });
+      // show a nicer name without path and extension
+      const name = songs[currentIndex].split("/").pop().replace(/\.[^/.]+$/, "");
+      document.getElementById("nowPlaying").textContent = "Now Playing: " + name;
     }
 
     function playRandomSong() {
@@ -82,7 +87,7 @@
       } else {
         currentIndex++;
         if (currentIndex >= songs.length) {
-          currentIndex = 0; // loop back to start
+          currentIndex = 0;
         }
         playCurrentSong();
       }
@@ -94,7 +99,7 @@
       } else {
         currentIndex--;
         if (currentIndex < 0) {
-          currentIndex = songs.length - 1; // loop to last song
+          currentIndex = songs.length - 1;
         }
         playCurrentSong();
       }
@@ -102,9 +107,12 @@
 
     // When a song ends, move to the next one
     player.addEventListener("ended", () => {
-      if (playlistActive) {
-        nextSong();
-      }
+      if (playlistActive) nextSong();
+    });
+
+    // Log audio loading/playing errors for debugging
+    player.addEventListener("error", () => {
+      console.error("Audio error:", player.error);
     });
   </script>
 </body>
